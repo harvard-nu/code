@@ -152,7 +152,7 @@ if __name__ == '__main__':
     dof = len(y_fit) - len(minuit.values)
 
     # reduced chi2
-    print('chi2 / dof: {} / {} = {}'.format(chi2, dof, chi2/dof))
+    print('chi2 / dof = {} / {} = {}'.format(chi2, dof, chi2/dof))
 
     #//////////////////////////////////////////////////////////////////////////
     # plot histogram of the sample and estimated Gaussian function

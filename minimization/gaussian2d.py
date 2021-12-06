@@ -94,7 +94,6 @@ def make_nll(x_bin_edges, y_bin_edges, counts):
     x_bin_centers = 0.5*(x_bin_edges[1:]+x_bin_edges[:-1])
     y_bin_centers = 0.5*(y_bin_edges[1:]+y_bin_edges[:-1])
     def nll(mu_x, mu_y, sigma_x, sigma_y, a, corr):
-        #a = 1
         _nll = 0.
         rows, cols = counts.shape
         for row in range(rows):
@@ -126,12 +125,15 @@ if __name__ == '__main__':
     n = 100000
 
     # mean of bivariate Gaussian
-    # [ mu_x, mu_y ]
-    mean = [ 0, 0 ]
+    mu_x, mu_y = 0, 0
+    mean = [ mu_x, mu_y ]
 
     # covariance of bivariate Gaussian
-    # [[sigma_x**2, corr*sigma_x*sigma_y], [corr*sigma_x*sigma_y, sigma_y**2]]
-    cov = [[ 1, -0.5 ], [ -0.5, 1 ]]
+    sigma_x, sigma_y, corr = 1.5, 1.5, -0.5
+    cov = [
+        [ sigma_x**2, corr*sigma_x*sigma_y ],
+        [ corr*sigma_y*sigma_x, sigma_y**2 ],
+    ]
 
     # binning for 2d histogram
     x_bin_lower, x_bin_upper, x_bin_width = -6, 6, 0.1
@@ -251,7 +253,7 @@ if __name__ == '__main__':
     dof = len(z_fit) - len(minuit.values)
 
     # reduced chi2
-    print('chi2 / dof: {} / {} = {}'.format(chi2, dof, chi2/dof))
+    print('chi2 / dof = {} / {} = {}'.format(chi2, dof, chi2/dof))
 
     #//////////////////////////////////////////////////////////////////////////
     # plot histogram of the sample and estimated bivariate Gaussian function
