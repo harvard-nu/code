@@ -269,6 +269,7 @@ if __name__ == '__main__':
     p = ax.pcolormesh(x, y, np.ma.masked_where(counts == 0, counts).T,
                       shading='auto')  # with mask
     # p = ax.pcolormesh(x, y, counts.T, shading='auto')  # without mask
+    p.set_rasterized(True)
 
     #--------------------------------------------------------------------------
     # create color bar for the 2D histogram
