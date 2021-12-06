@@ -136,6 +136,24 @@ if __name__ == '__main__':
     print('minuit.merrors:')
     print(minuit.merrors)
 
+    #--------------------------------------------------------------------------
+    # get Gaussian function with estimated parameters from minimization
+    #--------------------------------------------------------------------------
+    x = 0.5*(x_edges[1:]+x_edges[:-1])
+    y = minuit.values['a'] * norm.pdf(x, minuit.values['mu'], minuit.values['sigma'])
+
+    #--------------------------------------------------------------------------
+    # chi2
+    #--------------------------------------------------------------------------
+    mask = counts == 0
+    y_fit = y[~mask]
+
+    chi2 = ((y_fit - counts[~mask])**2 / y_fit).sum()
+    dof = len(y_fit) - len(minuit.values)
+
+    # reduced chi2
+    print('chi2 / dof: {} / {} = {}'.format(chi2, dof, chi2/dof))
+
     #//////////////////////////////////////////////////////////////////////////
     # plot histogram of the sample and estimated Gaussian function
     #//////////////////////////////////////////////////////////////////////////
@@ -154,8 +172,6 @@ if __name__ == '__main__':
     #--------------------------------------------------------------------------
     # use the estimated parameters plot the Gaussian function
     #--------------------------------------------------------------------------
-    x = 0.5*(x_edges[1:]+x_edges[:-1])
-    y = minuit.values['a'] * norm.pdf(x, minuit.values['mu'], minuit.values['sigma'])
     ax.plot(x, y, c='C1')
 
     #--------------------------------------------------------------------------

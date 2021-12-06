@@ -193,7 +193,7 @@ if __name__ == '__main__':
         corr=0,
         )
 
-    # step sizes for minuit's numerical gradient estimation
+    # set step sizes for minuit's numerical gradient estimation
     minuit.errors = (1e-5, 1e-5, 1e-5, 1e-5, 1e-1, 1e-5)
 
     # set limits for each parameter
@@ -228,6 +228,31 @@ if __name__ == '__main__':
     print('minuit.merrors:')
     print(minuit.merrors)
 
+    #--------------------------------------------------------------------------
+    # chi2
+    #--------------------------------------------------------------------------
+    x_bin_centers = 0.5*(x_edges[1:]+x_edges[:-1])
+    y_bin_centers = 0.5*(y_edges[1:]+y_edges[:-1])
+    x_, y_ = np.meshgrid(x_bin_centers, y_bin_centers)
+    z_ = gaussian2d(
+        x_, y_,
+        minuit.values['mu_x'],
+        minuit.values['mu_y'],
+        minuit.values['sigma_x'],
+        minuit.values['sigma_y'],
+        minuit.values['a'],
+        minuit.values['corr']
+        )
+
+    mask = counts == 0
+    z_fit = z_[~mask]
+
+    chi2 = ((z_fit - counts[~mask])**2 / z_fit).sum()
+    dof = len(z_fit) - len(minuit.values)
+
+    # reduced chi2
+    print('chi2 / dof: {} / {} = {}'.format(chi2, dof, chi2/dof))
+
     #//////////////////////////////////////////////////////////////////////////
     # plot histogram of the sample and estimated bivariate Gaussian function
     #//////////////////////////////////////////////////////////////////////////
@@ -253,7 +278,7 @@ if __name__ == '__main__':
     cb.set_label(z_label, rotation=90, fontsize=z_font_size)  # z label
 
     #--------------------------------------------------------------------------
-    # use the estimated parameters plot the 2D Gaussian function
+    # use the estimated parameters plot the bivariate Gaussian function
     #--------------------------------------------------------------------------
     z = gaussian2d(
         x, y,
@@ -265,7 +290,7 @@ if __name__ == '__main__':
         minuit.values['corr']
         )
 
-    # plot contour of the 2D Gaussian function
+    # plot contour of the bivariate Gaussian function
     c = ax.contour(x, y, z, levels=7, colors='w', linewidths=1.5, alpha=1)
     ax.clabel(c, inline=True, fontsize=6)
 
